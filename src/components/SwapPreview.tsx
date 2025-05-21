@@ -15,11 +15,32 @@ const SwapPreview = (props: SwapPreviewProps) => {
     };
 
     const calculateTokenAmount = (amount: number, price: number) => {
-        return (amount / price).toFixed(6);
+        const tokenAmount = (amount / price);
+        return formatTokenAmount(tokenAmount);
+    };
+
+    const formatTokenAmount = (amount: number): string => {
+        if(amount === 0) return "0";
+
+        if(amount < 0.00001) {
+            return amount.toExponential(4);
+        };
+
+        if(amount < 1) {
+            return amount.toFixed(4);
+        }
+
+        if(amount < 1000) {
+            return amount.toFixed(2);
+        }
+
+        return formatNumberWithCommas(amount.toFixed(2));
     };
 
     const calculateExchangeRate = () => {
-        return (sourceToken.priceInUSD / targetToken.priceInUSD).toFixed(6);
+        const rate = sourceToken.priceInUSD / targetToken.priceInUSD;
+        return formatTokenAmount(rate);
+        
     };
 
     //Format USD value with commas and 2 decimal places
@@ -28,7 +49,25 @@ const SwapPreview = (props: SwapPreviewProps) => {
     };
 
     const formatTokenPrice = (price: number) => {
-        return formatNumberWithCommas(price.toFixed(6));
+        if(price === 0) return "$0";
+
+        if(price < 0.00001) {
+            return price.toExponential(4);
+        }
+
+        if(price < 0.01) {
+            return price.toFixed(6);
+        }
+
+        if(price < 1) {
+            return price.toFixed(4);
+        }
+
+        if(price < 1000) {
+            return price.toFixed(2);
+        }
+
+        return formatNumberWithCommas(price.toFixed(2));
     };
 
 
