@@ -19,6 +19,16 @@ This interface simulates a basic token swap preview tool — commonly found on d
 
 ---
 
+## 🎨 Design Approach & Process
+User Interface
+I aimed for a clean, intuitive interface following the wireframe provided, while adding some enhancements for better user experience:
+
+Progressive Disclosure: The target token selector only appears after a source token is selected, guiding users through a step-by-step process
+Token Swap Button: Added a dedicated swap button that appears only when both tokens are selected
+Visual Feedback: Used Bootstrap cards with color-coded headers to clearly separate different sections
+Responsive Design: Implemented a mobile-friendly layout using Bootstrap's grid system
+Error States: Created proper loading states and error handling with user-friendly messages
+
 ## 🛠️ Technologies Used
 
 - **React** with **TypeScript**

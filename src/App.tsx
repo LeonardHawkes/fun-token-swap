@@ -22,7 +22,6 @@ function App() {
       <footer className='bg-light py-3 mt-5'>
         <div className='container text-center text-muted'>
           <p className='mb-0'>Disclaimer: This is a demo application created by Leonard Hawkes. Token prices are for demonstration purposes only.</p>
-          <p className='mb-0'>...And to hopefully land an offer</p>
         </div>
       </footer>
     </div>
