@@ -12,11 +12,6 @@ const USDInput = (props: USDInputProps) => {
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     };
 
-    const parseFormattedNumber = (formattedValue: string): number => {
-        //Remove all commas and convert to number
-        return Number(formattedValue.replace(/,/g, ""));
-    };
-
     useEffect(() => {
         if(value) {
             setDisplayValue(formatNumberWithCommas(value));
