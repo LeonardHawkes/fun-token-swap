@@ -17,6 +17,9 @@ const supportedTokens: {symbol: string; chainId: string; name?: string}[] = [
     {symbol: "USDT", chainId: "137", name: "Tether USD"},
     {symbol: "ETH", chainId: "8453", name: "Ethereum"},
     {symbol: "WBTC", chainId: "1", name: "Wrapped Bitcoin"},
+    {symbol: "LINK", chainId: "1", name: "Chainlink"},
+    {symbol: "UNI", chainId: "1", name: "Uniswap"},
+    {symbol: "DOGE", chainId: "1", name: "Dogecoin"},
 ];
 
 //Set Placeholder logo urls
@@ -25,6 +28,29 @@ const logoUrls: Record<string, string> = {
     "USDT": "https://cryptologos.cc/logos/tether-usdt-logo.png?v=026",
     "ETH": "https://cryptologos.cc/logos/ethereum-eth-logo.png?v=026",
     "WBTC": "https://cryptologos.cc/logos/wrapped-bitcoin-wbtc-logo.png?v=026",
+    "LINK": "https://cryptologos.cc/logos/chainlink-link-logo.png?v=026",
+    "UNI": "https://cryptologos.cc/logos/uniswap-uni-logo.png?v=026",
+    "DOGE": "https://cryptologos.cc/logos/dogecoin-doge-logo.png?v=026",
+};
+
+const fallbackPrices: Record<string, number> = {
+    "USDC": 1.0,
+    "USDT": 1.0,
+    "ETH": 3500.0,
+    "WBTC": 65000.0,
+    "LINK": 15.5,
+    "UNI": 8.2,
+    "DOGE": 0.12,
+};
+
+const defaultDecimalPlaces: Record<string, number> = {
+    "USDC": 6,
+    "USDT": 6,
+    "ETH": 18,
+    "WBTC": 8,
+    "LINK": 18,
+    "UNI": 18,
+    "DOGE": 8,
 };
 
 const fetchSingleToken = async (
@@ -33,7 +59,6 @@ const fetchSingleToken = async (
     name?: string
 ): Promise<Token | null> => {
     try {
-
         //Use the actual API key or fallback
         const apiKey = API_KEY || FALLBACK_API_KEY;
 
@@ -63,10 +88,23 @@ const fetchSingleToken = async (
             tokenAddress: metadata.address,
             priceInUSD: price.unitPrice,
             logoUrl: logoUrls[symbol],
-            decimals: metadata.decimals || 18,
+            decimals: metadata.decimals || defaultDecimalPlaces[symbol] || 18,
         };
     } catch(error) {
         console.error(`Error fetching ${symbol} on chain ${chainId}`, error);
+
+        //Fallback prices if API fails
+        if(fallbackPrices[symbol]) {
+            return {
+                symbol,
+                name: name || symbol,
+                chainId,
+                tokenAddress: "0x" + "0".repeat(40),
+                priceInUSD: fallbackPrices[symbol],
+                logoUrl: logoUrls[symbol],
+                decimals: defaultDecimalPlaces[symbol] || 18,
+            };
+        }
         return null;
     }
 };
