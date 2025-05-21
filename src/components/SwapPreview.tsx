@@ -10,12 +10,25 @@ type SwapPreviewProps = {
 const SwapPreview = (props: SwapPreviewProps) => {
     const {sourceToken, targetToken, usdAmount} = props;
 
+    const formatNumberWithCommas = (num: number | string): string => {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+
     const calculateTokenAmount = (amount: number, price: number) => {
         return (amount / price).toFixed(6);
     };
 
     const calculateExchangeRate = () => {
         return (sourceToken.priceInUSD / targetToken.priceInUSD).toFixed(6);
+    };
+
+    //Format USD value with commas and 2 decimal places
+    const formatUSD = (amount: number) => {
+        return formatNumberWithCommas(amount.toFixed(2));
+    };
+
+    const formatTokenPrice = (price: number) => {
+        return formatNumberWithCommas(price.toFixed(6));
     };
 
 
@@ -36,10 +49,10 @@ const SwapPreview = (props: SwapPreviewProps) => {
                                     {sourceToken.symbol}
                                 </p>
                                 <p className="card-text">
-                                    <strong>Value:</strong> ${usdAmount.toFixed(2)} USD
+                                    <strong>Value:</strong> ${formatUSD(usdAmount)} USD
                                 </p>
                                 <p className="card-text">
-                                    <strong>Price:</strong> ${sourceToken.priceInUSD.toFixed(6)} USD
+                                    <strong>Price:</strong> ${formatTokenPrice(sourceToken.priceInUSD)} USD
                                 </p>
                             </div>
                         </div>
@@ -54,10 +67,10 @@ const SwapPreview = (props: SwapPreviewProps) => {
                                     {targetToken.symbol}
                                 </p>
                                 <p className="card-text">
-                                    <strong>Value:</strong> ${usdAmount.toFixed(2)} USD
+                                    <strong>Value:</strong> ${formatUSD(usdAmount)} USD
                                 </p>
                                 <p className="card-text">
-                                    <strong>Price:</strong> ${targetToken.priceInUSD.toFixed(6)} USD
+                                    <strong>Price:</strong> ${formatTokenPrice(targetToken.priceInUSD)} USD
                                 </p>
                             </div>
                         </div>
