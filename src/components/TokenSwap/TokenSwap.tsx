@@ -70,6 +70,12 @@ const TokenSwap = () => {
     }
   };
 
+  const handleReset = () => {
+    setSourceToken(null);
+    setTargetToken(null);
+    setUsdAmount(0);
+  }
+
   if (loading) {
     return (
       <div className="container mt-5 text-center">
@@ -153,6 +159,19 @@ const TokenSwap = () => {
               targetToken={targetToken}
               usdAmount={usdAmount}
             />
+          )}
+
+          {/* Add a bottom reset button for better UX, especially on mobile*/}
+          {(sourceToken || targetToken || usdAmount > 0) && (
+            <div className="text-center mt-4">
+                <button
+                    className="btn btn-outline-secondary"
+                    onClick={handleReset}
+                >
+                    <i className="bi bi-arrow-counterclockwise me-1"></i>
+                    Reset All Selections
+                </button>
+            </div>
           )}
         </div>
       </div>
