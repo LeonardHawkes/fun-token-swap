@@ -4,7 +4,13 @@ import {
 } from '@funkit/api-base';
 import { Token } from '../types/tokens';
 
-const API_KEY = 'Z9SZaOwpmE40KX61mUKWm5hrpGh7WHVkaTvQJpQk';
+const API_KEY = process.env.REACT_APP_API_KEY;
+
+const FALLBACK_API_KEY = '';
+
+if(!API_KEY && !FALLBACK_API_KEY) {
+    console.warn('No API key found. Please set REACT_APP_API_KEY in your .env file.');
+}
 
 const supportedTokens: {symbol: string; chainId: string; name?: string}[] = [
     {symbol: "USDC", chainId: "1", name:"USD Coin"},
@@ -13,24 +19,39 @@ const supportedTokens: {symbol: string; chainId: string; name?: string}[] = [
     {symbol: "WBTC", chainId: "1", name: "Wrapped Bitcoin"},
 ];
 
+//Set Placeholder logo urls
+const logoUrls: Record<string, string> = {
+    "USDC": "https://cryptologos.cc/logos/usd-coin-usdc-logo.png?v=026",
+    "USDT": "https://cryptologos.cc/logos/tether-usdt-logo.png?v=026",
+    "ETH": "https://cryptologos.cc/logos/ethereum-eth-logo.png?v=026",
+    "WBTC": "https://cryptologos.cc/logos/wrapped-bitcoin-wbtc-logo.png?v=026",
+};
+
 const fetchSingleToken = async (
     symbol: string,
     chainId: string,
     name?: string
 ): Promise<Token | null> => {
     try {
+
+        //Use the actual API key or fallback
+        const apiKey = API_KEY || FALLBACK_API_KEY;
+
+        if(!apiKey) {
+            throw new Error('API key is required but not provided.');
+        }
         //Get token metadata
         const metadata = await getAssetErc20ByChainAndSymbol({
             chainId,
             symbol,
-            apiKey: API_KEY,
+            apiKey,
         });
 
         //get token price
         const price = await getAssetPriceInfo({
             chainId,
             assetTokenAddress: metadata.address,
-            apiKey: API_KEY,
+            apiKey,
         });
 
         //return combined token data
@@ -41,6 +62,8 @@ const fetchSingleToken = async (
             chainId,
             tokenAddress: metadata.address,
             priceInUSD: price.unitPrice,
+            logoUrl: logoUrls[symbol],
+            decimals: metadata.decimals || 18,
         };
     } catch(error) {
         console.error(`Error fetching ${symbol} on chain ${chainId}`, error);
@@ -80,10 +103,16 @@ export const refreshTokenPrices = async (tokens:Token[]): Promise<Token[]> => {
     try {
         const refreshPromises = tokens.map(async (token) => {
             try {
+                // Use the actual API key or fallback
+                const apiKey = API_KEY || FALLBACK_API_KEY;
+                
+                if (!apiKey) {
+                    throw new Error('API key is required but not provided.');
+                }
                 const price = await getAssetPriceInfo({
                     chainId: token.chainId,
                     assetTokenAddress: token.tokenAddress,
-                    apiKey: API_KEY,
+                    apiKey,
                 });
 
                 return {
