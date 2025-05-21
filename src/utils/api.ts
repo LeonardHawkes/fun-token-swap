@@ -12,15 +12,31 @@ if(!API_KEY && !FALLBACK_API_KEY) {
     console.warn('No API key found. Please set REACT_APP_API_KEY in your .env file.');
 }
 
-const supportedTokens: {symbol: string; chainId: string; name?: string}[] = [
+//Feature flagging
+const TOKEN_FEATURES = {
+    ENABLE_ADDITIONAL_TOKENS: true, //Master switch
+    ENABLE_LINK: true,
+    ENABLE_UNI: true,
+    ENABLE_DOGE: true
+};
+
+const coreTokens = [
     {symbol: "USDC", chainId: "1", name:"USD Coin"},
     {symbol: "USDT", chainId: "137", name: "Tether USD"},
     {symbol: "ETH", chainId: "8453", name: "Ethereum"},
     {symbol: "WBTC", chainId: "1", name: "Wrapped Bitcoin"},
-    {symbol: "LINK", chainId: "1", name: "Chainlink"},
-    {symbol: "UNI", chainId: "1", name: "Uniswap"},
-    {symbol: "DOGE", chainId: "1", name: "Dogecoin"},
 ];
+
+const additionalTokens = [
+    ...(TOKEN_FEATURES.ENABLE_LINK && TOKEN_FEATURES.ENABLE_ADDITIONAL_TOKENS ? 
+        [{symbol: "LINK", chainId: "1", name: "Chainlink"}] : []),
+    ...(TOKEN_FEATURES.ENABLE_UNI && TOKEN_FEATURES.ENABLE_ADDITIONAL_TOKENS ? 
+        [{symbol: "UNI", chainId: "1", name: "Uniswap"}] : []),
+    ...(TOKEN_FEATURES.ENABLE_DOGE && TOKEN_FEATURES.ENABLE_ADDITIONAL_TOKENS ? 
+        [{symbol: "DOGE", chainId: "1", name: "Dogecoin"}] : []),
+];
+
+const supportedTokens = [...coreTokens, ...additionalTokens];
 
 //Set Placeholder logo urls
 const logoUrls: Record<string, string> = {
